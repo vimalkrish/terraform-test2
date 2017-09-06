@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = "${aws_vpc.mod.id}"
 
   tags {
-    Name = "${var.name}"
+    Name = "${var.name}-IGW"
   }
 
   lifecycle {
