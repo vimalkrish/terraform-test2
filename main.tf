@@ -36,7 +36,7 @@ resource "aws_eip" "gw_eip" {
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = "${aws_eip.gw_eip.id}"
-  subnet_id     = "${aws_subnet.public.0.id}"
+  subnet_id     = "${aws_subnet.prod-public-primary-1a.id}"
   depends_on    = ["aws_internet_gateway.internet_gateway"]
 
   lifecycle {
@@ -44,16 +44,66 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 
-# Public subnets
+# Private subnets
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "prod-private-primary-1a" {
   vpc_id            = "${aws_vpc.mod.id}"
-  cidr_block        = "${element(var.public_subnets, count.index)}"
-  availability_zone = "${element(var.azs, count.index)}"
-  count             = "${length(var.public_subnets)}"
+  cidr_block        = "${var.prod-private-primary-1a}"
+  availability_zone = "${var.az-1a}"
 
   tags {
-    Name = "${var.name}-public"
+    Name = "prod-private-primary-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "prod-private-secondary-1b" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.prod-private-secondary-1b}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "prod-private-secondary-1b"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+#public
+
+resource "aws_subnet" "prod-public-primary-1a" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.prod-public-primary-1a}"
+  availability_zone = "${var.az-1a}"
+
+  tags {
+    Name = "prod-public-primary-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+resource "aws_subnet" "prod-public-secondary-1b" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.prod-public-secondary-1b}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "prod-public-secondary-1b"
   }
 
   map_public_ip_on_launch = true
@@ -92,22 +142,6 @@ resource "aws_route_table_association" "public" {
   }
 }
 
-# Private subsets
-
-resource "aws_subnet" "private" {
-  vpc_id            = "${aws_vpc.mod.id}"
-  cidr_block        = "${element(var.private_subnets, count.index)}"
-  availability_zone = "${element(var.azs, count.index)}"
-  count             = "${length(var.private_subnets)}"
-
-  tags {
-    Name = "${var.name}-private"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 # Routing table for private subnets
 
