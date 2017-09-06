@@ -12,7 +12,7 @@ resource "aws_vpc" "mod" {
   }
 }
 
-# NAT Gateway
+# Internet Gateway
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = "${aws_vpc.mod.id}"
@@ -26,7 +26,8 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
-resource "aws_eip" "gw_eip" {
+#NAT Gateway
+resource "aws_eip" "gw_eip_prod_private-1a" {
   vpc = true
 
   lifecycle {
@@ -34,8 +35,18 @@ resource "aws_eip" "gw_eip" {
   }
 }
 
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = "${aws_eip.gw_eip.id}"
+resource "aws_eip" "gw_eip_prod_private-1b" {
+  vpc = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+
+resource "aws_nat_gateway" "nat_gateway_prod_private-1a" {
+  allocation_id = "${aws_eip.gw_eip_prod_private-1a.id}"
   subnet_id     = "${aws_subnet.prod-public-primary-1a.id}"
   depends_on    = ["aws_internet_gateway.internet_gateway"]
 
@@ -43,6 +54,17 @@ resource "aws_nat_gateway" "nat_gateway" {
     create_before_destroy = true
   }
 }
+
+resource "aws_nat_gateway" "nat_gateway_prod_private-1b" {
+  allocation_id = "${aws_eip.gw_eip_prod_private-1b.id}"
+  subnet_id     = "${aws_subnet.prod-public-secondary-1b.id}"
+  depends_on    = ["aws_internet_gateway.internet_gateway"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 
 # Private subnets
 
@@ -132,29 +154,36 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public" {
-  subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
+resource "aws_route_table_association" "prod-public-primary-1a" {
+  subnet_id      = "${aws_subnet.prod-public-primary-1a.id}"
   route_table_id = "${aws_route_table.public.id}"
-  count          = "${length(var.public_subnets)}"
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
+resource "aws_route_table_association" "prod-public-secondary-1b" {
+  subnet_id      = "${aws_subnet.prod-public-secondary-1b.id}"
+  route_table_id = "${aws_route_table.public.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 # Routing table for private subnets
 
-resource "aws_route_table" "private" {
+resource "aws_route_table" "private-1a" {
   vpc_id = "${aws_vpc.mod.id}"
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.nat_gateway.id}"
+    nat_gateway_id = "${aws_nat_gateway.nat_gateway_prod_private-1a.id}"
   }
 
   tags {
-    Name = "${var.name}-private"
+    Name = "${var.name}-private-1a"
   }
 
   lifecycle {
@@ -162,10 +191,35 @@ resource "aws_route_table" "private" {
   }
 }
 
-resource "aws_route_table_association" "private" {
-  subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
-  route_table_id = "${aws_route_table.private.id}"
-  count          = "${length(var.azs)}"
+resource "aws_route_table" "private-1b" {
+  vpc_id = "${aws_vpc.mod.id}"
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = "${aws_nat_gateway.nat_gateway_prod_private-1b.id}"
+  }
+
+  tags {
+    Name = "${var.name}-private-1b"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "prod-private-primary-1a" {
+  subnet_id      = "${aws_subnet.prod-private-primary-1a.id}"
+  route_table_id = "${aws_route_table.private-1a.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "prod-private-secondary-1b" {
+  subnet_id      = "${aws_subnet.prod-private-secondary-1b.id}"
+  route_table_id = "${aws_route_table.private-1b.id}"
 
   lifecycle {
     create_before_destroy = true
