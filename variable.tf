@@ -8,13 +8,23 @@ variable "cidr" {
   type        = "string"
 }
 
-variable "public_subnets" {
-  description = "A list of public subnets inside the VPC."
+variable "prod-private-primary-1a" {
+  description = "prod-private-primary-1a"
   default     = []
 }
 
-variable "private_subnets" {
-  description = "A list of private subnets inside the VPC."
+variable "prod-private-secondary-1b" {
+  description = "prod-private-secondary-1b"
+  default     = []
+}
+
+variable "prod-public-primary-1a" {
+  description = "prod-public-primary-1a"
+  default     = []
+}
+
+variable "prod-public-secondary-1b" {
+  description = "prod-public-secondary-1b"
   default     = []
 }
 
