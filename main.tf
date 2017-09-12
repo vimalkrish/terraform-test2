@@ -301,6 +301,32 @@ resource "aws_route_table_association" "prod-public-secondary-1b" {
   }
 }
 
+resource "aws_route_table_association" "corp-public-hubzuprod-1a" {
+  subnet_id      = "${aws_subnet.corp-public-hubzuprod-1a.id}"
+  route_table_id = "${aws_route_table.public.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "uat-public-primary-1a" {
+  subnet_id      = "${aws_subnet.uat-public-primary-1a.id}"
+  route_table_id = "${aws_route_table.public.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "uat-public-secondary-1b" {
+  subnet_id      = "${aws_subnet.uat-public-secondary-1b.id}"
+  route_table_id = "${aws_route_table.public.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 # Routing table for private subnets
 
 resource "aws_route_table" "private-1a" {
@@ -330,6 +356,23 @@ resource "aws_route_table" "private-1b" {
 
   tags {
     Name = "${var.name}-private-1b"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table" "uat-private" {
+  vpc_id = "${aws_vpc.mod.id}"
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = "${aws_nat_gateway.nat_gateway_uat_private.id}"
+  }
+
+  tags {
+    Name = "${var.name}-uat-private"
   }
 
   lifecycle {
