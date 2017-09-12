@@ -28,6 +28,41 @@ variable "prod-public-secondary-1b" {
   default     = ""
 }
 
+variable "corp-private-primary-1a" {
+  description = "corp-private-primary-1a"
+  default     = ""
+}
+
+variable "corp-private-secondary-1b" {
+  description = "corp-private-secondary-1b"
+  default     = ""
+}
+
+variable "corp-public-hubzuprod-1a" {
+  description = "corp-public-hubzuprod-1a"
+  default     = ""
+}
+
+variable "uat-private-primary-1a" {
+  description = "uat-private-primary-1a"
+  default     = ""
+}
+
+variable "uat-private-secondary-1b" {
+  description = "uat-private-secondary-1b"
+  default     = ""
+}
+
+variable "uat-public-primary-1a" {
+  description = "uat-public-primary-1a"
+  default     = ""
+}
+
+variable "uat-public-secondary-1b" {
+  description = "uat-public-secondary-1b"
+  default     = ""
+}
+
 variable "az-1a" {
   description = "az-1a"
   default     = "us-east-1a"
