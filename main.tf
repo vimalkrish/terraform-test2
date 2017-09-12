@@ -43,6 +43,13 @@ resource "aws_eip" "gw_eip_prod_private-1b" {
   }
 }
 
+resource "aws_eip" "gw_eip_uat_private" {
+  vpc = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 
 resource "aws_nat_gateway" "nat_gateway_prod_private-1a" {
@@ -65,6 +72,16 @@ resource "aws_nat_gateway" "nat_gateway_prod_private-1b" {
   }
 }
 
+
+resource "aws_nat_gateway" "nat_gateway_uat_private" {
+  allocation_id = "${aws_eip.gw_eip_uat_private.id}"
+  subnet_id     = "${aws_subnet.uat-public-primary-1a.id}"
+  depends_on    = ["aws_internet_gateway.internet_gateway"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 # Private subnets
 
@@ -100,6 +117,70 @@ resource "aws_subnet" "prod-private-secondary-1b" {
   }
 }
 
+resource "aws_subnet" "corp-private-primary-1a" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.corp-private-primary-1a}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "corp-private-primary-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "corp-private-secondary-1b" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.corp-private-secondary-1b}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "corp-private-secondary-1b"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "uat-private-primary-1a" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.uat-private-primary-1a}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "uat-private-primary-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "uat-private-secondary-1b" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.uat-private-secondary-1b}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "uat-private-secondary-1b"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 #public
 
 resource "aws_subnet" "prod-public-primary-1a" {
@@ -126,6 +207,54 @@ resource "aws_subnet" "prod-public-secondary-1b" {
 
   tags {
     Name = "prod-public-secondary-1b"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "corp-public-hubzuprod-1a" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.corp-public-hubzuprod-1a}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "corp-public-hubzuprod-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "uat-public-primary-1a" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.uat-public-primary-1a}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "uat-public-primary-1a"
+  }
+
+  map_public_ip_on_launch = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_subnet" "uat-public-secondary-1b" {
+  vpc_id            = "${aws_vpc.mod.id}"
+  cidr_block        = "${var.uat-public-secondary-1b}"
+  availability_zone = "${var.az-1b}"
+
+  tags {
+    Name = "uat-public-secondary-1b"
   }
 
   map_public_ip_on_launch = true
