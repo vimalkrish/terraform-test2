@@ -397,3 +397,39 @@ resource "aws_route_table_association" "prod-private-secondary-1b" {
     create_before_destroy = true
   }
 }
+
+resource "aws_route_table_association" "uat-private-primary-1a" {
+  subnet_id      = "${aws_subnet.uat-private-primary-1a.id}"
+  route_table_id = "${aws_route_table.uat-private.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "uat-private-secondary-1b" {
+  subnet_id      = "${aws_subnet.uat-private-secondary-1b.id}"
+  route_table_id = "${aws_route_table.uat-private.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "corp-private-primary-1a" {
+  subnet_id      = "${aws_subnet.corp-private-primary-1a.id}"
+  route_table_id = "${aws_route_table.private-1a.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route_table_association" "corp-private-secondary-1b" {
+  subnet_id      = "${aws_subnet.corp-private-secondary-1b.id}"
+  route_table_id = "${aws_route_table.private-1b.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
