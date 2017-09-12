@@ -94,7 +94,7 @@ resource "aws_subnet" "prod-private-primary-1a" {
     Name = "prod-private-primary-1a"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
@@ -110,7 +110,7 @@ resource "aws_subnet" "prod-private-secondary-1b" {
     Name = "prod-private-secondary-1b"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
@@ -126,7 +126,7 @@ resource "aws_subnet" "corp-private-primary-1a" {
     Name = "corp-private-primary-1a"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
@@ -142,7 +142,7 @@ resource "aws_subnet" "corp-private-secondary-1b" {
     Name = "corp-private-secondary-1b"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
@@ -158,7 +158,7 @@ resource "aws_subnet" "uat-private-primary-1a" {
     Name = "uat-private-primary-1a"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
@@ -174,7 +174,7 @@ resource "aws_subnet" "uat-private-secondary-1b" {
     Name = "uat-private-secondary-1b"
   }
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   lifecycle {
     create_before_destroy = true
